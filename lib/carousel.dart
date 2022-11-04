@@ -58,7 +58,7 @@ class _CarouselState extends State<Carousel> {
             height: MediaQuery.of(context).size.width * 0.75,
             decoration: BoxDecoration(
               image: DecorationImage(
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
                 image: NetworkImage(widget.images[i]),
               ),
             ),
@@ -135,63 +135,6 @@ class _CarouselState extends State<Carousel> {
                   child: Stack(
                     children: [
                       ..._animatedImage,
-                      SizedBox(
-                        width: width,
-                        height: height,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            IconButton(
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                              icon: const Icon(Icons.arrow_back),
-                              onPressed: () {
-                                if (_index <= 0) {
-                                  return;
-                                }
-                                setState(() {
-                                  _index--;
-                                  _animatedImage = [];
-                                  addimageList();
-                                  if (_index > _scrollIndex + 3 ||
-                                      _index < _scrollIndex) {
-                                    if (_index <= widget.images.length - 4) {
-                                      _scrollIndex = _index;
-                                    } else {
-                                      _scrollIndex = widget.images.length - 4;
-                                    }
-                                    _scroll();
-                                  }
-                                });
-                              },
-                            ),
-                            IconButton(
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                              icon: const Icon(Icons.arrow_forward),
-                              onPressed: () {
-                                if (_index >= widget.images.length - 1) {
-                                  return;
-                                }
-                                setState(() {
-                                  _index++;
-                                  _animatedImage = [];
-                                  addimageList();
-                                  if (_index > _scrollIndex + 3 ||
-                                      _index < _scrollIndex) {
-                                    if (_index <= widget.images.length - 4) {
-                                      _scrollIndex = _index;
-                                    } else {
-                                      _scrollIndex = widget.images.length - 4;
-                                    }
-                                    _scroll();
-                                  }
-                                });
-                              },
-                            )
-                          ],
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -220,74 +163,88 @@ class _CarouselState extends State<Carousel> {
                   },
                   child: Stack(
                     children: [
-                      SizedBox(
-                        height: height * 0.2,
-                        child: ListView.separated(
-                          itemCount: widget.images.length,
-                          separatorBuilder: (context, i) => const SizedBox(
-                            width: 10,
-                          ),
-                          scrollDirection: Axis.horizontal,
-                          physics: const NeverScrollableScrollPhysics(),
-                          controller: _controller,
-                          itemBuilder: ((context, i) => AutoScrollTag(
-                                key: ValueKey(i),
-                                controller: _controller,
-                                index: i,
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      _index = i;
-                                      _animatedImage = [];
-                                      addimageList();
-                                    });
-                                  },
-                                  child: Container(
-                                    width: (width - 30) / 4,
-                                    height: height * 0.2,
-                                    decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                            image:
-                                                NetworkImage(widget.images[i]),
-                                            fit: BoxFit.cover)),
+                      Center(
+                        child: SizedBox(
+                          height: 50,
+                          width: 230,
+                          child: ListView.separated(
+                            itemCount: widget.images.length,
+                            separatorBuilder: (context, i) => const SizedBox(
+                              width: 10,
+                            ),
+                            scrollDirection: Axis.horizontal,
+                            physics: const NeverScrollableScrollPhysics(),
+                            controller: _controller,
+                            itemBuilder: ((context, i) => AutoScrollTag(
+                                  key: ValueKey(i),
+                                  controller: _controller,
+                                  index: i,
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        _index = i;
+                                        _animatedImage = [];
+                                        addimageList();
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(4),
+                                      child: Image(
+                                        image: NetworkImage(widget.images[i]),
+                                        fit: BoxFit.fitHeight,
+                                      ),
+                                      width: 50,
+                                      decoration: BoxDecoration(
+                                        border: _index == i
+                                            ? Border.all(
+                                                color: Colors.green,
+                                              )
+                                            : null,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(4)),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              )),
+                                )),
+                          ),
                         ),
                       ),
-                      SizedBox(
-                        width: width,
-                        height: height * 0.2,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            IconButton(
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                              icon: const Icon(Icons.arrow_back),
-                              onPressed: () {
-                                setState(() {
-                                  if (_scrollIndex > 0) {
-                                    _scrollIndex--;
-                                    _scroll();
-                                  }
-                                });
-                              },
-                            ),
-                            IconButton(
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                              icon: const Icon(Icons.arrow_forward),
-                              onPressed: () {
-                                if (_scrollIndex <= widget.images.length - 5) {
+                      Center(
+                        child: SizedBox(
+                          width: 300,
+                          height: 50,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                icon: const Icon(Icons.arrow_back_ios),
+                                onPressed: () {
                                   setState(() {
-                                    _scrollIndex++;
-                                    _scroll();
+                                    if (_scrollIndex > 0) {
+                                      _scrollIndex--;
+                                      _scroll();
+                                    }
                                   });
-                                }
-                              },
-                            )
-                          ],
+                                },
+                              ),
+                              IconButton(
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                icon: const Icon(Icons.arrow_forward_ios),
+                                onPressed: () {
+                                  if (_scrollIndex <=
+                                      widget.images.length - 5) {
+                                    setState(() {
+                                      _scrollIndex++;
+                                      _scroll();
+                                    });
+                                  }
+                                },
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ],

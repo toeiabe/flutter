@@ -10,8 +10,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Scroll To Index Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+          splashColor: Colors.transparent,
+          primarySwatch: Colors.blue,
+          scaffoldBackgroundColor: Color(0xFFFFFFFF)),
       home: GalleryScreen(),
     );
   }
