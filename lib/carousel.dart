@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scroll_to_index/scroll_to_index.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class Carousel extends StatefulWidget {
   final List<String> images;
@@ -14,8 +14,9 @@ class _CarouselState extends State<Carousel> {
 
   int _index = 0;
   List<Widget> _animatedImage = [];
-  final AutoScrollController _controller =
-      AutoScrollController(axis: Axis.horizontal);
+  ItemScrollController _scrollController = ItemScrollController();
+  final ItemPositionsListener itemPositionsListener =
+      ItemPositionsListener.create();
   int _scrollIndex = 0;
   @override
   void initState() {
@@ -68,11 +69,6 @@ class _CarouselState extends State<Carousel> {
     }
   }
 
-  Future _scroll() async {
-    await _controller.scrollToIndex(_scrollIndex,
-        preferPosition: AutoScrollPosition.begin);
-  }
-
   @override
   Widget build(BuildContext context) {
     String? swipeDirection;
@@ -109,7 +105,9 @@ class _CarouselState extends State<Carousel> {
                           } else {
                             _scrollIndex = widget.images.length - 4;
                           }
-                          _scroll();
+                          _scrollController.scrollTo(
+                              index: _scrollIndex,
+                              duration: Duration(milliseconds: 200));
                         }
                       });
                     } else if (detail.primaryVelocity! > 0) {
@@ -127,7 +125,9 @@ class _CarouselState extends State<Carousel> {
                           } else {
                             _scrollIndex = widget.images.length - 4;
                           }
-                          _scroll();
+                          _scrollController.scrollTo(
+                              index: _scrollIndex,
+                              duration: Duration(milliseconds: 200));
                         }
                       });
                     }
@@ -149,14 +149,19 @@ class _CarouselState extends State<Carousel> {
                       if (_scrollIndex <= widget.images.length - 5) {
                         setState(() {
                           _scrollIndex++;
-                          _scroll();
+                          _scrollController.scrollTo(
+                              index: _scrollIndex,
+                              duration: Duration(milliseconds: 200),
+                              alignment: 2);
                         });
                       }
                     } else if (detail.primaryVelocity! > 0) {
                       setState(() {
                         if (_scrollIndex > 0) {
                           _scrollIndex--;
-                          _scroll();
+                          _scrollController.scrollTo(
+                              index: _scrollIndex,
+                              duration: Duration(milliseconds: 200));
                         }
                       });
                     }
@@ -167,42 +172,37 @@ class _CarouselState extends State<Carousel> {
                         child: SizedBox(
                           height: 50,
                           width: 230,
-                          child: ListView.separated(
+                          child: ScrollablePositionedList.separated(
                             itemCount: widget.images.length,
                             separatorBuilder: (context, i) => const SizedBox(
                               width: 10,
                             ),
                             scrollDirection: Axis.horizontal,
                             physics: const NeverScrollableScrollPhysics(),
-                            controller: _controller,
-                            itemBuilder: ((context, i) => AutoScrollTag(
-                                  key: ValueKey(i),
-                                  controller: _controller,
-                                  index: i,
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        _index = i;
-                                        _animatedImage = [];
-                                        addimageList();
-                                      });
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.all(4),
-                                      child: Image(
-                                        image: NetworkImage(widget.images[i]),
-                                        fit: BoxFit.fitHeight,
-                                      ),
-                                      width: 50,
-                                      decoration: BoxDecoration(
-                                        border: _index == i
-                                            ? Border.all(
-                                                color: Colors.green,
-                                              )
-                                            : null,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(4)),
-                                      ),
+                            itemScrollController: _scrollController,
+                            itemBuilder: ((context, i) => InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      _index = i;
+                                      _animatedImage = [];
+                                      addimageList();
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(4),
+                                    child: Image(
+                                      image: NetworkImage(widget.images[i]),
+                                      fit: BoxFit.fitHeight,
+                                    ),
+                                    width: 50,
+                                    decoration: BoxDecoration(
+                                      border: _index == i
+                                          ? Border.all(
+                                              color: Colors.green,
+                                            )
+                                          : null,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(4)),
                                     ),
                                   ),
                                 )),
@@ -224,7 +224,10 @@ class _CarouselState extends State<Carousel> {
                                   setState(() {
                                     if (_scrollIndex > 0) {
                                       _scrollIndex--;
-                                      _scroll();
+                                      _scrollController.scrollTo(
+                                          index: _scrollIndex,
+                                          duration:
+                                              Duration(milliseconds: 200));
                                     }
                                   });
                                 },
@@ -238,7 +241,10 @@ class _CarouselState extends State<Carousel> {
                                       widget.images.length - 5) {
                                     setState(() {
                                       _scrollIndex++;
-                                      _scroll();
+                                      _scrollController.scrollTo(
+                                          index: _scrollIndex,
+                                          duration:
+                                              Duration(milliseconds: 200));
                                     });
                                   }
                                 },
