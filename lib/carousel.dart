@@ -150,9 +150,9 @@ class _CarouselState extends State<Carousel> {
                         setState(() {
                           _scrollIndex++;
                           _scrollController.scrollTo(
-                              index: _scrollIndex,
-                              duration: Duration(milliseconds: 200),
-                              alignment: 2);
+                            index: _scrollIndex,
+                            duration: Duration(milliseconds: 200),
+                          );
                         });
                       }
                     } else if (detail.primaryVelocity! > 0) {
@@ -171,8 +171,9 @@ class _CarouselState extends State<Carousel> {
                       Center(
                         child: SizedBox(
                           height: 50,
-                          width: 230,
+                          width: widget.images.length <= 4 ? null : 230,
                           child: ScrollablePositionedList.separated(
+                            shrinkWrap: true,
                             itemCount: widget.images.length,
                             separatorBuilder: (context, i) => const SizedBox(
                               width: 10,
@@ -210,48 +211,51 @@ class _CarouselState extends State<Carousel> {
                         ),
                       ),
                       Center(
-                        child: SizedBox(
-                          width: 300,
-                          height: 50,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              IconButton(
-                                padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(),
-                                icon: const Icon(Icons.arrow_back_ios),
-                                onPressed: () {
-                                  setState(() {
-                                    if (_scrollIndex > 0) {
-                                      _scrollIndex--;
-                                      _scrollController.scrollTo(
-                                          index: _scrollIndex,
-                                          duration:
-                                              Duration(milliseconds: 200));
-                                    }
-                                  });
-                                },
+                        child: widget.images.length <= 4
+                            ? null
+                            : SizedBox(
+                                width: 300,
+                                height: 50,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    IconButton(
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
+                                      icon: const Icon(Icons.arrow_back_ios),
+                                      onPressed: () {
+                                        setState(() {
+                                          if (_scrollIndex > 0) {
+                                            _scrollIndex--;
+                                            _scrollController.scrollTo(
+                                                index: _scrollIndex,
+                                                duration: Duration(
+                                                    milliseconds: 200));
+                                          }
+                                        });
+                                      },
+                                    ),
+                                    IconButton(
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
+                                      icon: const Icon(Icons.arrow_forward_ios),
+                                      onPressed: () {
+                                        if (_scrollIndex <=
+                                            widget.images.length - 5) {
+                                          setState(() {
+                                            _scrollIndex++;
+                                            _scrollController.scrollTo(
+                                                index: _scrollIndex,
+                                                duration: Duration(
+                                                    milliseconds: 200));
+                                          });
+                                        }
+                                      },
+                                    )
+                                  ],
+                                ),
                               ),
-                              IconButton(
-                                padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(),
-                                icon: const Icon(Icons.arrow_forward_ios),
-                                onPressed: () {
-                                  if (_scrollIndex <=
-                                      widget.images.length - 5) {
-                                    setState(() {
-                                      _scrollIndex++;
-                                      _scrollController.scrollTo(
-                                          index: _scrollIndex,
-                                          duration:
-                                              Duration(milliseconds: 200));
-                                    });
-                                  }
-                                },
-                              )
-                            ],
-                          ),
-                        ),
                       ),
                     ],
                   ),
